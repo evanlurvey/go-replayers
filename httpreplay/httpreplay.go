@@ -37,7 +37,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/google/go-replayers/httpreplay/internal/proxy"
+	"github.com/evanlurvey/go-replayers/httpreplay/internal/proxy"
 )
 
 // A Recorder records HTTP interactions.
