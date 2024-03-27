@@ -43,6 +43,7 @@ var (
 	cert         = flag.String("cert", "", "The server certificate file path")
 	key          = flag.String("key", "", "The private key file path")
 	debugHeaders = flag.Bool("debug-headers", false, "log header mismatches")
+	scrubBody    = flag.String("scrub-body", "", "regex to scrub from body")
 )
 
 func main() {
@@ -66,6 +67,9 @@ func main() {
 		log.Fatal(err)
 	}
 	proxy.DebugHeaders = *debugHeaders
+	if *scrubBody != "" {
+		pr.ScrubBody([]string{*scrubBody})
+	}
 
 	// Expose handlers on the control port.
 	mux := http.NewServeMux()
