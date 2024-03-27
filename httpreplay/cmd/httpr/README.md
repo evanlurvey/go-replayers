@@ -56,13 +56,21 @@ releases page](https://github.com/googleapis/google-cloud-go/releases).
 1. Have your test program treat `httpr` as a proxy, as described above.
 1. Run your test program. Your Google API clients should use no authentication.
 
-### Body Scrubbing
+### Scrubbing
+
+#### Body
 
 To scrub the body (great for replacing sensitive data with placeholders), 
 use the `-body-scrub` flag. This flag takes a regex pattern and will replace any match with `CLEARED`. 
-You must use the same flag when recording and replaying for the matching to work.
+The flag is only required when recording. When replaying the rules are pulled from the replay file.
 
 Example: `httpr -record myclient.replay -body-scrub '(client_secret=\w+)|(client_id=\w+)'`
+
+#### Headers
+
+To remove headers use the `-remove-request-headers` flag. This flag takes a comma separated list of headers to remove.
+
+Example: `httpr -record myclient.replay -remove-request-headers 'X-Datadog-*,Traceparent,Tracestate'`
 
 ## Tips
 

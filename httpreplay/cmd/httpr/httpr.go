@@ -29,6 +29,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/evanlurvey/go-replayers/httpreplay/internal/proxy"
@@ -44,7 +45,7 @@ var (
 	key                  = flag.String("key", "", "The private key file path")
 	debugHeaders         = flag.Bool("debug-headers", false, "log header mismatches")
 	scrubBody            = flag.String("scrub-body", "", "regex to scrub from body")
-	removeRequestHeaders = flag.String("remove-request-headers", "", "regex to remove matching request headers")
+	removeRequestHeaders = flag.String("remove-request-headers", "", "comma-separated list of headers to remove from requests, use * as a wildcard")
 )
 
 func main() {
@@ -65,7 +66,7 @@ func main() {
 			pr.ScrubBody([]string{*scrubBody})
 		}
 		if *removeRequestHeaders != "" {
-			pr.RemoveRequestHeaders([]string{*removeRequestHeaders})
+			pr.RemoveRequestHeaders(strings.Split(*removeRequestHeaders, ","))
 		}
 	} else {
 		pr, err = proxy.ForReplaying(*replay, *port, *cert, *key)

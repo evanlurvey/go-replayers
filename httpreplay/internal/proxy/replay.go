@@ -152,7 +152,7 @@ func (r *replayRoundTripper) RoundTrip(req *http.Request) (*http.Response, error
 			return toHTTPResponse(call.res, req), nil
 		}
 	}
-	return nil, fmt.Errorf("no matching request for %+v", req)
+	return nil, fmt.Errorf("no matching request for %+v", creq)
 }
 
 // Report whether the incoming request in matches the candidate request cand.
