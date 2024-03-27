@@ -36,14 +36,15 @@ import (
 )
 
 var (
-	port         = flag.Int("port", 8080, "port of the proxy")
-	controlPort  = flag.Int("control-port", 8181, "port for controlling the proxy")
-	record       = flag.String("record", "", "record traffic and save to filename")
-	replay       = flag.String("replay", "", "read filename and replay traffic")
-	cert         = flag.String("cert", "", "The server certificate file path")
-	key          = flag.String("key", "", "The private key file path")
-	debugHeaders = flag.Bool("debug-headers", false, "log header mismatches")
-	scrubBody    = flag.String("scrub-body", "", "regex to scrub from body")
+	port                 = flag.Int("port", 8080, "port of the proxy")
+	controlPort          = flag.Int("control-port", 8181, "port for controlling the proxy")
+	record               = flag.String("record", "", "record traffic and save to filename")
+	replay               = flag.String("replay", "", "read filename and replay traffic")
+	cert                 = flag.String("cert", "", "The server certificate file path")
+	key                  = flag.String("key", "", "The private key file path")
+	debugHeaders         = flag.Bool("debug-headers", false, "log header mismatches")
+	scrubBody            = flag.String("scrub-body", "", "regex to scrub from body")
+	removeRequestHeaders = flag.String("remove-request-headers", "", "regex to remove matching request headers")
 )
 
 func main() {
@@ -60,6 +61,12 @@ func main() {
 	var err error
 	if *record != "" {
 		pr, err = proxy.ForRecording(*record, *port, *cert, *key)
+		if *scrubBody != "" {
+			pr.ScrubBody([]string{*scrubBody})
+		}
+		if *removeRequestHeaders != "" {
+			pr.RemoveRequestHeaders([]string{*removeRequestHeaders})
+		}
 	} else {
 		pr, err = proxy.ForReplaying(*replay, *port, *cert, *key)
 	}
@@ -67,9 +74,6 @@ func main() {
 		log.Fatal(err)
 	}
 	proxy.DebugHeaders = *debugHeaders
-	if *scrubBody != "" {
-		pr.ScrubBody([]string{*scrubBody})
-	}
 
 	// Expose handlers on the control port.
 	mux := http.NewServeMux()
